@@ -1,0 +1,17 @@
+{
+  "name": "FrameOn Agency — Agence de création de contenu vidéo B2B",
+  "short_name": "FrameOn",
+  "description": "Agence de création de contenu vidéo pour les entreprises. Plus que des réalisateurs, une force de proposition.",
+  "lang": "fr-FR",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b0b0c",
+  "theme_color": "#ff4d2e",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
