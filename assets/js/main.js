@@ -77,10 +77,48 @@
   /* ---------- Vidéo d'accueil (lecture en boucle continue) ---------- */
   const heroVideo = document.querySelector("[data-hero-video]");
   if (heroVideo) {
+    heroVideo.defaultMuted = true;
     heroVideo.muted = true;
     heroVideo.loop = true;
-    const p = heroVideo.play();
-    if (p && typeof p.catch === "function") p.catch(() => {});
+    heroVideo.playsInline = true;
+    heroVideo.setAttribute("muted", "");
+    heroVideo.setAttribute("playsinline", "");
+    heroVideo.setAttribute("webkit-playsinline", "");
+
+    const attemptHeroPlay = () => {
+      if (reduceMotion.matches) {
+        heroVideo.removeAttribute("autoplay");
+        heroVideo.pause();
+        return;
+      }
+      if (!heroVideo.paused) return;
+      const p = heroVideo.play();
+      if (p && typeof p.catch === "function") p.catch(() => {});
+    };
+
+    const syncHeroMotion = (prefersReduced) => {
+      if (prefersReduced) {
+        heroVideo.removeAttribute("autoplay");
+        heroVideo.pause();
+      } else {
+        attemptHeroPlay();
+      }
+    };
+
+    syncHeroMotion(reduceMotion.matches);
+    if (typeof reduceMotion.addEventListener === "function") {
+      reduceMotion.addEventListener("change", (e) => syncHeroMotion(e.matches));
+    }
+    ["loadedmetadata", "loadeddata", "canplay"].forEach((evt) => {
+      heroVideo.addEventListener(evt, attemptHeroPlay, { passive: true });
+    });
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") attemptHeroPlay();
+    });
+    // Fallback pour iOS en Mode économie d'énergie : démarre au premier toucher
+    ["touchstart", "pointerdown"].forEach((evt) => {
+      window.addEventListener(evt, attemptHeroPlay, { once: true, passive: true });
+    });
   }
 
   /* ---------- Apparition au scroll ---------- */
